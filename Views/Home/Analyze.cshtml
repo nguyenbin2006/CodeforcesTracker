@@ -1,0 +1,93 @@
+﻿@model List<CodeforcesTracker.DTOs.TagAnalysisResult>
+
+@{
+    ViewData["Title"] = "Phân tích điểm yếu";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Top Điểm Yếu Thuật Toán Của: <span class="text-primary">@ViewBag.Handle</span></h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tag Thuật Toán</th>
+                        <th>Tổng số lần nộp</th>
+                        <th>Số lần sai (WA/TLE)</th>
+                        <th>Tỷ lệ sai (%)</th>
+                        <th>Đánh giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            // Đổi màu cảnh báo nếu tỷ lệ sai trên 60%
+                            string rowClass = item.FailureRate > 60 ? "table-danger" : "";
+
+                            <tr class="@rowClass">
+                                <td class="fw-bold">@item.TagName</td>
+                                <td>@item.TotalAttempts</td>
+                                <td>@item.FailedAttempts</td>
+                                <td class="fw-bold text-danger">@item.FailureRate %</td>
+                                <td>
+                                    @if (item.FailureRate > 60)
+                                    {
+                                        <span class="badge bg-danger">Cần luyện tập khẩn cấp</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Cần cải thiện</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-muted">Không đủ dữ liệu để phân tích. Hãy nộp thêm nhiều bài trên Codeforces!</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="btn btn-secondary">Quay lại trang chủ</a>
+            </div>
+
+        </div>
+    </div>
+    <!-- ... Bảng điểm yếu ở trên ... -->
+    @if (ViewBag.Suggestions != null)
+    {
+        var suggestions = (List<CodeforcesTracker.DTOs.CFProblem>)ViewBag.Suggestions;
+
+        <div class="card shadow-sm mt-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-lightbulb-fill"></i> Bot Gợi ý: Luyện tập mảng "@ViewBag.WeakestTag"</h5>
+            </div>
+            <div class="card-body">
+                <p>Dựa trên điểm yếu của bạn, hệ thống đã lọc ra 5 bài tập bạn <b>chưa từng giải</b> ở mức độ dễ tiếp cận nhất:</p>
+                <div class="list-group">
+                    @foreach (var prob in suggestions)
+                    {
+                        // Tạo Link trỏ thẳng tới bài tập trên Codeforces
+                        string cfLink = $"https://codeforces.com/problemset/problem/{prob.ContestId}/{prob.Index}";
+
+                        <a href="@cfLink" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@prob.ContestId@prob.Index</strong> - @prob.Name
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Độ khó: @prob.Rating</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

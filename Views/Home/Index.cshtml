@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ - Codeforces Tracker";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0 text-center">Tải dữ liệu Codeforces</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- Hiển thị thông báo (Thành công hoặc Lỗi) -->
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-@TempData["MessageType"] alert-dismissible fade show" role="alert">
+                            <strong>Thông báo:</strong> @TempData["Message"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <!-- Form gửi Handle về Controller -->
+                    <form asp-controller="Home" asp-action="SyncData" method="post">
+                        <div class="mb-3">
+                            <label for="handle" class="form-label font-weight-bold">Nhập Codeforces Handle của bạn:</label>
+                            <input type="text" class="form-control" id="handle" name="handle" placeholder="Ví dụ: tourist" required>
+                            <div class="form-text">Hệ thống sẽ lấy tối đa 100 bài nộp gần nhất.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Bắt đầu đồng bộ dữ liệu
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
